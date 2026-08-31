@@ -498,15 +498,24 @@ class HomeView extends GetView<HomeController> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Price
-                    Text(
-                      '${subject.priceEgp} ج.م',
-                      style: GoogleFonts.cairo(
-                        color: Colors.cyanAccent,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
+                    // Enrollment Status Indicator
+                    if (subject.isEnrolled)
+                      Row(
+                        children: [
+                          const Icon(Icons.check_circle_outline, color: Colors.greenAccent, size: 18),
+                          const SizedBox(width: 4),
+                          Text(
+                            'مشترك',
+                            style: GoogleFonts.cairo(
+                              color: Colors.greenAccent,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      )
+                    else
+                      const SizedBox.shrink(),
                     // Badge
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
