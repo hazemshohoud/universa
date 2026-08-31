@@ -318,7 +318,7 @@ class SubjectDetailsView extends GetView<SubjectDetailsController> {
                   ),
                 )
               : Text(
-                  'يمكنك الاشتراك في هذه المادة من خلال الموقع الرسمي',
+                  'هذه المادة متاحة للمشتركين فقط',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.cairo(
                     fontSize: 14,
