@@ -8,7 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../data/services/auth_service.dart';
 
 class VideoWatermarkOverlay extends StatefulWidget {
-  const VideoWatermarkOverlay({Key? key}) : super(key: key);
+  const VideoWatermarkOverlay({super.key});
 
   @override
   State<VideoWatermarkOverlay> createState() => _VideoWatermarkOverlayState();

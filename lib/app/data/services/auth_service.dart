@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_udid/flutter_udid.dart';
 import 'package:uuid/uuid.dart';
 import '../models/profile_model.dart';
 
@@ -53,34 +52,19 @@ class AuthService extends GetxService {
       // Try to read existing valid UUID
       String? deviceId = await _storage.read(key: 'device_id');
       
-      // Check if it's a valid UUID
-      bool isValid = false;
-      if (deviceId != null) {
+      if (deviceId != null && deviceId.isNotEmpty) {
         try {
           Uuid.parse(deviceId);
-          isValid = true;
-        } catch (_) {
-          isValid = false;
-        }
+          return deviceId;
+        } catch (_) {}
       }
 
-      if (!isValid) {
-        // Get raw hardware ID
-        String rawId = await FlutterUdid.consistentUdid;
-        
-        // Generate a consistent UUID v5 based on the raw hardware ID
-        // Using a fixed namespace ensures the same device always gets the same UUID
-        deviceId = const Uuid().v5(Uuid.NAMESPACE_URL, rawId);
-        
-        // Save the valid UUID
-        await _storage.write(key: 'device_id', value: deviceId);
-      }
-      
-      return deviceId!;
+      // Generate a new random UUID v4
+      final newUuid = const Uuid().v4();
+      await _storage.write(key: 'device_id', value: newUuid);
+      return newUuid;
     } catch (e) {
-      // Fallback: Generate a random UUID v4 if everything else fails
       final randomUuid = const Uuid().v4();
-      await _storage.write(key: 'device_id', value: randomUuid);
       return randomUuid; 
     }
   }

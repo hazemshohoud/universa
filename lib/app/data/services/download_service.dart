@@ -15,15 +15,12 @@ class DownloadService extends GetxService {
   final OfflineDatabase _db = OfflineDatabase.instance;
   final Dio _dio = Dio();
   final Map<String, CancelToken> _cancelTokens = {};
-  
-  // Stream for progress updates
-  final _progressStreamController = StreamController<Map<String, dynamic>>.broadcast();
-  Stream<Map<String, dynamic>> get progressStream => _progressStreamController.stream;
 
-  @override
-  void onInit() {
-    super.onInit();
-  }
+  // Stream for progress updates
+  final _progressStreamController =
+      StreamController<Map<String, dynamic>>.broadcast();
+  Stream<Map<String, dynamic>> get progressStream =>
+      _progressStreamController.stream;
 
   Future<String?> downloadLesson(Lesson lesson) async {
     final url = lesson.directHlsUrl ?? lesson.videoUrl;
@@ -39,15 +36,19 @@ class DownloadService extends GetxService {
     if (existingDownload != null) {
       // Resume
       taskId = existingDownload['download_id'];
-      
+
       // If it's already running, do nothing
       if (existingDownload['download_status'] == 1) {
         return taskId;
       }
 
       // Update status to Running
-      await _db.updateDownloadStatus(taskId, 1, existingDownload['download_progress'] ?? 0);
-      
+      await _db.updateDownloadStatus(
+        taskId,
+        1,
+        existingDownload['download_progress'] ?? 0,
+      );
+
       // Emit update
       _progressStreamController.add({
         'lesson_id': lesson.id,
@@ -55,17 +56,16 @@ class DownloadService extends GetxService {
         'status': 1,
         'progress': existingDownload['download_progress'] ?? 0,
       });
-
     } else {
       // New download
       if (Platform.isAndroid) {
         if (await Permission.storage.request().isDenied) {
-           // Proceeding anyway
+          // Proceeding anyway
         }
       }
 
       taskId = const Uuid().v4();
-      
+
       await _db.insertDownload({
         'lesson_id': lesson.id,
         'title': lesson.title,
@@ -78,7 +78,7 @@ class DownloadService extends GetxService {
         'file_size': 0,
         'created_at': DateTime.now().toIso8601String(),
       });
-      
+
       // Emit update
       _progressStreamController.add({
         'lesson_id': lesson.id,
@@ -96,7 +96,7 @@ class DownloadService extends GetxService {
 
     return taskId;
   }
-  
+
   Future<void> pauseDownload(int lessonId) async {
     final download = await _db.getDownloadByLessonId(lessonId);
     if (download != null) {
@@ -106,8 +106,12 @@ class DownloadService extends GetxService {
         _cancelTokens.remove(taskId);
       }
       // Update status to 5 (Paused)
-      await _db.updateDownloadStatus(taskId, 5, download['download_progress'] ?? 0);
-      
+      await _db.updateDownloadStatus(
+        taskId,
+        5,
+        download['download_progress'] ?? 0,
+      );
+
       // Emit update
       _progressStreamController.add({
         'lesson_id': lessonId,
@@ -118,7 +122,12 @@ class DownloadService extends GetxService {
     }
   }
 
-  Future<void> _startDownload(String taskId, Lesson lesson, String masterUrl, CancelToken cancelToken) async {
+  Future<void> _startDownload(
+    String taskId,
+    Lesson lesson,
+    String masterUrl,
+    CancelToken cancelToken,
+  ) async {
     try {
       final appDocDir = await getApplicationDocumentsDirectory();
       // Create a specific directory for this lesson
@@ -138,40 +147,54 @@ class DownloadService extends GetxService {
         final lines = m3u8Content.split('\n');
         String? bestVariantUrl;
         int maxBandwidth = -1;
-        
-        debugPrint('DownloadService: Parsing master playlist for highest quality...');
+
+        debugPrint(
+          'DownloadService: Parsing master playlist for highest quality...',
+        );
 
         for (int i = 0; i < lines.length; i++) {
           final line = lines[i];
           if (line.contains('#EXT-X-STREAM-INF')) {
             // Parse BANDWIDTH
             final bandwidthMatch = RegExp(r'BANDWIDTH=(\d+)').firstMatch(line);
-            final bandwidth = bandwidthMatch != null ? int.tryParse(bandwidthMatch.group(1)!) ?? 0 : 0;
-            
+            final bandwidth = bandwidthMatch != null
+                ? int.tryParse(bandwidthMatch.group(1)!) ?? 0
+                : 0;
+
             // Also check for RESOLUTION for logging
-            final resolutionMatch = RegExp(r'RESOLUTION=(\d+x\d+)').firstMatch(line);
-            final resolution = resolutionMatch != null ? resolutionMatch.group(1) : 'unknown';
+            final resolutionMatch = RegExp(
+              r'RESOLUTION=(\d+x\d+)',
+            ).firstMatch(line);
+            final resolution = resolutionMatch != null
+                ? resolutionMatch.group(1)
+                : 'unknown';
 
-            if (i + 1 < lines.length && !lines[i+1].startsWith('#')) {
-               String variantUri = lines[i+1].trim();
-               if (variantUri.isNotEmpty) {
-                 if (!variantUri.startsWith('http')) {
-                   variantUri = Uri.parse(currentUrl).resolve(variantUri).toString();
-                 }
-                 
-                 debugPrint('DownloadService: Found variant: $resolution, Bandwidth: $bandwidth');
+            if (i + 1 < lines.length && !lines[i + 1].startsWith('#')) {
+              String variantUri = lines[i + 1].trim();
+              if (variantUri.isNotEmpty) {
+                if (!variantUri.startsWith('http')) {
+                  variantUri = Uri.parse(
+                    currentUrl,
+                  ).resolve(variantUri).toString();
+                }
 
-                 if (bandwidth > maxBandwidth) {
-                   maxBandwidth = bandwidth;
-                   bestVariantUrl = variantUri;
-                 }
-               }
+                debugPrint(
+                  'DownloadService: Found variant: $resolution, Bandwidth: $bandwidth',
+                );
+
+                if (bandwidth > maxBandwidth) {
+                  maxBandwidth = bandwidth;
+                  bestVariantUrl = variantUri;
+                }
+              }
             }
           }
         }
 
         if (bestVariantUrl != null) {
-          debugPrint('DownloadService: Selected highest quality variant with bandwidth: $maxBandwidth');
+          debugPrint(
+            'DownloadService: Selected highest quality variant with bandwidth: $maxBandwidth',
+          );
           currentUrl = bestVariantUrl;
           response = await _dio.get(currentUrl, cancelToken: cancelToken);
           m3u8Content = response.data.toString();
@@ -182,7 +205,7 @@ class DownloadService extends GetxService {
       final lines = m3u8Content.split('\n');
       final newM3u8Lines = <String>[];
       final segmentsToDownload = <String>[];
-      
+
       for (final line in lines) {
         final trimmed = line.trim();
         if (trimmed.isEmpty) continue;
@@ -200,7 +223,11 @@ class DownloadService extends GetxService {
             final keySavePath = '${lessonDir.path}/$keyFileName';
 
             try {
-              await _dio.download(absoluteKeyUrl, keySavePath, cancelToken: cancelToken);
+              await _dio.download(
+                absoluteKeyUrl,
+                keySavePath,
+                cancelToken: cancelToken,
+              );
               final newLine = trimmed.replaceFirst(originalUri, keyFileName);
               newM3u8Lines.add(newLine);
             } catch (e) {
@@ -219,7 +246,9 @@ class DownloadService extends GetxService {
           String absoluteSegmentUrl = segmentUri;
 
           if (!segmentUri.startsWith('http')) {
-            absoluteSegmentUrl = Uri.parse(currentUrl).resolve(segmentUri).toString();
+            absoluteSegmentUrl = Uri.parse(
+              currentUrl,
+            ).resolve(segmentUri).toString();
           }
 
           final segmentFileName = 'segment_${segmentsToDownload.length}.ts';
@@ -238,30 +267,39 @@ class DownloadService extends GetxService {
       final batchSize = 5; // Download 5 segments at a time
 
       for (int i = 0; i < totalSegments; i += batchSize) {
-        if (cancelToken.isCancelled) throw DioException(requestOptions: RequestOptions(path: ''), type: DioExceptionType.cancel);
+        if (cancelToken.isCancelled) {
+          throw DioException(
+            requestOptions: RequestOptions(path: ''),
+            type: DioExceptionType.cancel,
+          );
+        }
 
-        final end = (i + batchSize < totalSegments) ? i + batchSize : totalSegments;
+        final end = (i + batchSize < totalSegments)
+            ? i + batchSize
+            : totalSegments;
         final batch = segmentsToDownload.sublist(i, end);
 
-        await Future.wait(batch.asMap().entries.map((entry) async {
-          final index = i + entry.key;
-          final url = entry.value;
-          final savePath = '${lessonDir.path}/segment_$index.ts';
+        await Future.wait(
+          batch.asMap().entries.map((entry) async {
+            final index = i + entry.key;
+            final url = entry.value;
+            final savePath = '${lessonDir.path}/segment_$index.ts';
 
-          // Resume check: if file exists and has size > 0, skip
-          // Ideally check size match, but we don't know expected size without HEAD request.
-          final file = File(savePath);
-          if (await file.exists() && await file.length() > 0) {
-             return;
-          }
+            // Resume check: if file exists and has size > 0, skip
+            // Ideally check size match, but we don't know expected size without HEAD request.
+            final file = File(savePath);
+            if (await file.exists() && await file.length() > 0) {
+              return;
+            }
 
-          await _dio.download(url, savePath, cancelToken: cancelToken);
-        }));
+            await _dio.download(url, savePath, cancelToken: cancelToken);
+          }),
+        );
 
         completedCount += batch.length;
         final progress = ((completedCount / totalSegments) * 100).toInt();
         await _db.updateDownloadStatus(taskId, 1, progress); // 1 = Running
-        
+
         _progressStreamController.add({
           'lesson_id': lesson.id,
           'download_id': taskId,
@@ -273,7 +311,9 @@ class DownloadService extends GetxService {
       // 6. Finalize — only if still in DB (not deleted while downloading)
       final stillExists = await _db.getDownloadByLessonId(lesson.id);
       if (stillExists == null) {
-        debugPrint('DownloadService: Download was deleted while running. Skipping finalization.');
+        debugPrint(
+          'DownloadService: Download was deleted while running. Skipping finalization.',
+        );
         return;
       }
       await _db.updateDownloadStatus(taskId, 3, 100); // 3 = Success
@@ -283,7 +323,7 @@ class DownloadService extends GetxService {
         'status': 3,
         'progress': 100,
       });
-      
+
       // Update the path in DB using a safe relative path with forward slashes
       final db = await _db.database;
       // Always use forward slashes to ensure cross-platform compatibility
@@ -294,7 +334,6 @@ class DownloadService extends GetxService {
         where: 'download_id = ?',
         whereArgs: [taskId],
       );
-
     } catch (e) {
       if (CancelToken.isCancel(e as DioException)) {
         // Just cancelled, don't update to failed if we paused (status 5)
@@ -302,33 +341,36 @@ class DownloadService extends GetxService {
         // The pause method already updates status to 5.
         // The cancel method updates status to 4.
         // So we can check current status in DB? Or just rely on the caller setting the status.
-        
+
         // Actually, if we are here, it means the token was cancelled.
         // If it was cancelled by pauseDownload, the DB status is already 5.
         // If it was cancelled by cancelDownload, the DB status is 4.
-        
+
         // Let's check DB status just to be sure what happened?
         // Or simpler: The pause/cancel methods remove the token from _cancelTokens.
         // If it's still there, it wasn't manual? No.
-        
+
         // Let's trust the method that cancelled it handled the DB update.
         // But wait, pauseDownload updates DB THEN cancels token.
         // So here we might overwrite status 5 with 4 if we are not careful.
-        
+
         // Let's assume pauseDownload handles its own DB update.
         // We should only update to 4 if it's NOT 5.
-        
+
         final current = await _db.getDownloadByLessonId(lesson.id);
         if (current != null && current['download_status'] != 5) {
-             await _db.updateDownloadStatus(taskId, 4, current['download_progress'] ?? 0);
-             _progressStreamController.add({
-                'lesson_id': lesson.id,
-                'download_id': taskId,
-                'status': 4,
-                'progress': current['download_progress'] ?? 0,
-             });
+          await _db.updateDownloadStatus(
+            taskId,
+            4,
+            current['download_progress'] ?? 0,
+          );
+          _progressStreamController.add({
+            'lesson_id': lesson.id,
+            'download_id': taskId,
+            'status': 4,
+            'progress': current['download_progress'] ?? 0,
+          });
         }
-        
       } else {
         debugPrint('Download error: $e');
         await _db.updateDownloadStatus(taskId, 4, 0);
@@ -394,9 +436,13 @@ class DownloadService extends GetxService {
 
       // The absolute path doesn't exist. Try to salvage it by
       // extracting the 'downloads/<id>/index.m3u8' portion.
-      final match = RegExp(r'downloads[/\\](\d+)[/\\]([^/\\]+)$').firstMatch(inputPath);
+      final match = RegExp(
+        r'downloads[/\\](\d+)[/\\]([^/\\]+)$',
+      ).firstMatch(inputPath);
       if (match != null) {
-        final salvaged = File('$appDocPath/downloads/${match.group(1)}/${match.group(2)}');
+        final salvaged = File(
+          '$appDocPath/downloads/${match.group(1)}/${match.group(2)}',
+        );
         if (await salvaged.exists()) return salvaged;
       }
     }

@@ -294,8 +294,9 @@ class LessonDetailsView extends GetView<LessonDetailsController> {
                           final hasNext = controller.nextLessonId.value != null;
                           final hasPrev = controller.prevLessonId.value != null;
 
-                          if (!hasNext && !hasPrev)
+                          if (!hasNext && !hasPrev) {
                             return const SizedBox.shrink();
+                          }
 
                           return Row(
                             children: [

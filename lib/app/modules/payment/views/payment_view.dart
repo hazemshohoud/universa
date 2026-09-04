@@ -46,7 +46,7 @@ class PaymentView extends GetView<PaymentController> {
           'السعر: ${controller.subject.priceEgp} ج.م',
         ),
         const SizedBox(height: 24),
-        
+
         // Coupon Section
         Text(
           'كوبون الخصم (اختياري)',
@@ -57,21 +57,21 @@ class PaymentView extends GetView<PaymentController> {
         Row(
           children: [
             ElevatedButton(
-              onPressed: controller.isCheckingCoupon.value 
-                ? null 
-                : () => controller.checkCoupon(),
+              onPressed: controller.isCheckingCoupon.value
+                  ? null
+                  : () => controller.checkCoupon(),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.transparent,
                 side: BorderSide(color: Colors.white.withOpacity(0.2)),
                 elevation: 0,
               ),
               child: controller.isCheckingCoupon.value
-                ? const SizedBox(
-                    width: 20, 
-                    height: 20, 
-                    child: CircularProgressIndicator(strokeWidth: 2)
-                  )
-                : Text('تحقق', style: GoogleFonts.cairo(color: Colors.white)),
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : Text('تحقق', style: GoogleFonts.cairo(color: Colors.white)),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -94,7 +94,7 @@ class PaymentView extends GetView<PaymentController> {
             ),
           ],
         ),
-        
+
         // Coupon Result/Error
         if (controller.couponError.value != null)
           Padding(
@@ -107,7 +107,7 @@ class PaymentView extends GetView<PaymentController> {
           ),
 
         const SizedBox(height: 24),
-        
+
         // Price Breakdown
         Container(
           padding: const EdgeInsets.all(16),
@@ -117,24 +117,24 @@ class PaymentView extends GetView<PaymentController> {
           ),
           child: Column(
             children: [
-              _buildPriceRow('السعر الأصلي', '${controller.subject.priceEgp}'),
+              _buildPriceRow('السعر الأصلي', controller.subject.priceEgp),
               if (controller.couponResult.value != null) ...[
                 const SizedBox(height: 8),
                 _buildPriceRow(
-                  'الخصم', 
+                  'الخصم',
                   controller.couponResult.value!['discount'].toString(),
                   color: Colors.greenAccent,
                 ),
                 const Divider(color: Colors.white10, height: 24),
                 _buildPriceRow(
-                  'الإجمالي', 
+                  'الإجمالي',
                   controller.couponResult.value!['final_price'].toString(),
                   isBold: true,
                 ),
               ] else ...[
-                 const Divider(color: Colors.white10, height: 24),
-                 _buildPriceRow(
-                  'الإجمالي', 
+                const Divider(color: Colors.white10, height: 24),
+                _buildPriceRow(
+                  'الإجمالي',
                   controller.subject.priceEgp,
                   isBold: true,
                 ),
@@ -144,23 +144,28 @@ class PaymentView extends GetView<PaymentController> {
         ),
 
         const SizedBox(height: 32),
-        
+
         ElevatedButton.icon(
-          onPressed: controller.isInitiatingPayment.value 
-            ? null 
-            : () => controller.initiatePayment(),
+          onPressed: controller.isInitiatingPayment.value
+              ? null
+              : () => controller.initiatePayment(),
           icon: const Icon(Icons.payment),
           label: controller.isInitiatingPayment.value
-            ? const SizedBox(
-                width: 20, 
-                height: 20, 
-                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)
-              )
-            : Text('ابدأ الدفع عبر InstaPay', style: GoogleFonts.cairo()),
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                )
+              : Text('ابدأ الدفع عبر InstaPay', style: GoogleFonts.cairo()),
           style: ElevatedButton.styleFrom(
             backgroundColor: primaryColor,
             padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
           ),
         ),
       ],
@@ -185,7 +190,7 @@ class PaymentView extends GetView<PaymentController> {
               Text(
                 'كيف تتم عملية الدفع عبر InstaPay؟',
                 style: GoogleFonts.cairo(
-                  color: Colors.white, 
+                  color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
@@ -194,12 +199,16 @@ class PaymentView extends GetView<PaymentController> {
               const SizedBox(height: 12),
               _buildStepItem('1. اضغط "افتح تطبيق InstaPay" للدفع للمحاضر.'),
               _buildStepItem('2. انسخ الكود المرجعي وضعه في ملاحظات الدفع.'),
-              _buildStepItem('3. بعد الدفع، ارجع هنا لتأكيد العملية (رقم العملية إجباري).'),
-              _buildStepItem('4. بعد مراجعة المحاضر واعتماد الدفع، يتم تفعيل اشتراكك تلقائياً.'),
+              _buildStepItem(
+                '3. بعد الدفع، ارجع هنا لتأكيد العملية (رقم العملية إجباري).',
+              ),
+              _buildStepItem(
+                '4. بعد مراجعة المحاضر واعتماد الدفع، يتم تفعيل اشتراكك تلقائياً.',
+              ),
             ],
           ),
         ),
-        
+
         const SizedBox(height: 24),
 
         // Amount to Pay Display
@@ -217,14 +226,17 @@ class PaymentView extends GetView<PaymentController> {
                 Text(
                   '${controller.paymentDetails.value!['amount_to_pay']} ج.م',
                   style: GoogleFonts.cairo(
-                    color: Colors.greenAccent, 
-                    fontWeight: FontWeight.bold, 
+                    color: Colors.greenAccent,
+                    fontWeight: FontWeight.bold,
                     fontSize: 18,
                   ),
                 ),
                 Text(
                   'المبلغ المطلوب تحويله',
-                  style: GoogleFonts.cairo(color: Colors.greenAccent, fontSize: 14),
+                  style: GoogleFonts.cairo(
+                    color: Colors.greenAccent,
+                    fontSize: 14,
+                  ),
                 ),
               ],
             ),
@@ -240,7 +252,9 @@ class PaymentView extends GetView<PaymentController> {
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF6A1B9A), // InstaPay-ish color
             padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
           ),
         ),
 
@@ -267,13 +281,16 @@ class PaymentView extends GetView<PaymentController> {
                     children: [
                       Text(
                         'الكود المرجعي (ضعه في ملاحظات التحويل)',
-                        style: GoogleFonts.cairo(color: Colors.amber, fontSize: 12),
+                        style: GoogleFonts.cairo(
+                          color: Colors.amber,
+                          fontSize: 12,
+                        ),
                       ),
                       Text(
                         controller.paymentDetails.value!['ref_code'],
                         style: GoogleFonts.cairo(
-                          color: Colors.white, 
-                          fontWeight: FontWeight.bold, 
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
                           fontSize: 16,
                           letterSpacing: 1,
                         ),
@@ -361,22 +378,32 @@ class PaymentView extends GetView<PaymentController> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: primaryColor.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     'Choose File',
-                    style: GoogleFonts.cairo(color: primaryColor, fontWeight: FontWeight.bold, fontSize: 12),
+                    style: GoogleFonts.cairo(
+                      color: primaryColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
                   ),
                 ),
                 Expanded(
                   child: Text(
-                    controller.receiptImage.value != null 
-                      ? controller.receiptImage.value!.path.split('/').last 
-                      : 'No file chosen',
-                    style: GoogleFonts.cairo(color: Colors.white60, fontSize: 12),
+                    controller.receiptImage.value != null
+                        ? controller.receiptImage.value!.path.split('/').last
+                        : 'No file chosen',
+                    style: GoogleFonts.cairo(
+                      color: Colors.white60,
+                      fontSize: 12,
+                    ),
                     textAlign: TextAlign.right,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -389,21 +416,26 @@ class PaymentView extends GetView<PaymentController> {
         const SizedBox(height: 32),
 
         ElevatedButton.icon(
-          onPressed: controller.isConfirmingPayment.value 
-            ? null 
-            : () => controller.confirmPayment(),
+          onPressed: controller.isConfirmingPayment.value
+              ? null
+              : () => controller.confirmPayment(),
           icon: const Icon(Icons.send),
           label: controller.isConfirmingPayment.value
-            ? const SizedBox(
-                width: 20, 
-                height: 20, 
-                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)
-              )
-            : Text('إرسال التأكيد', style: GoogleFonts.cairo()),
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                )
+              : Text('إرسال التأكيد', style: GoogleFonts.cairo()),
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.teal,
             padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
           ),
         ),
         const SizedBox(height: 16),
@@ -428,15 +460,30 @@ class PaymentView extends GetView<PaymentController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text(line1, style: GoogleFonts.cairo(color: Colors.white70, fontSize: 14)),
+          Text(
+            line1,
+            style: GoogleFonts.cairo(color: Colors.white70, fontSize: 14),
+          ),
           const SizedBox(height: 4),
-          Text(line2, style: GoogleFonts.cairo(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+          Text(
+            line2,
+            style: GoogleFonts.cairo(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildPriceRow(String label, String value, {bool isBold = false, Color? color}) {
+  Widget _buildPriceRow(
+    String label,
+    String value, {
+    bool isBold = false,
+    Color? color,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -465,7 +512,11 @@ class PaymentView extends GetView<PaymentController> {
       padding: const EdgeInsets.only(bottom: 8),
       child: Text(
         text,
-        style: GoogleFonts.cairo(color: Colors.white70, fontSize: 12, height: 1.5),
+        style: GoogleFonts.cairo(
+          color: Colors.white70,
+          fontSize: 12,
+          height: 1.5,
+        ),
         textAlign: TextAlign.right,
       ),
     );

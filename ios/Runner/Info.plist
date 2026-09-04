@@ -26,7 +26,6 @@
 		<string>$(FLUTTER_BUILD_NUMBER)</string>
 		<key>LSApplicationQueriesSchemes</key>
 		<array>
-			<string>instapay</string>
 			<string>https</string>
 			<string>http</string>
 			<string>tel</string>
@@ -95,11 +94,11 @@
 			</dict>
 		</array>
 		<key>NSPhotoLibraryUsageDescription</key>
-		<string>يحتاج التطبيق إذن الوصول لمعرض الصور لاختيار وتحديد صور إثبات الدفع والاشتراك.</string>
+		<string>يحتاج التطبيق إذن الوصول لمعرض الصور لاختيار وتحديد الصورة الشخصية والمرفقات.</string>
 		<key>NSPhotoLibraryAddUsageDescription</key>
 		<string>يحتاج التطبيق إذن حفظ الصور والملفات في معرض الصور عند التنزيل.</string>
 		<key>NSCameraUsageDescription</key>
-		<string>يحتاج التطبيق إذن استخدام الكاميرا لالتقاط صور إثبات الدفع والاشتراك مباشرة.</string>
+		<string>يحتاج التطبيق إذن استخدام الكاميرا لالتقاط الصورة الشخصية والمرفقات.</string>
 		<key>NSMicrophoneUsageDescription</key>
 		<string>يحتاج التطبيق إذن استخدام الميكروفون عند تشغيل أو تسجيل وسائط الفيديو أو الصوت.</string>
 		<key>NSUserTrackingUsageDescription</key>

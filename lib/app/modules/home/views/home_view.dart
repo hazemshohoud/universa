@@ -56,7 +56,7 @@ class HomeView extends GetView<HomeController> {
               backgroundColor: const Color(0xFF4A148C),
               child: ClipOval(
                 child: Image.asset(
-                  'assets/logo (1).png',
+                  'assets/logo.png',
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => const Icon(Icons.school, color: Colors.white, size: 20),
                 ),
