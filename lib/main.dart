@@ -14,7 +14,11 @@ void main() async {
   final authService = Get.put(AuthService(), permanent: true);
   Get.put(ContentService(), permanent: true);
   Get.put(DownloadService(), permanent: true);
-  await Get.putAsync(() => AdService().init(), permanent: true);
+  try {
+    await Get.putAsync(() => AdService().init(), permanent: true);
+  } catch (e) {
+    debugPrint('AdService init error: $e');
+  }
 
   // Check login status and first time
   final isFirstTime = await authService.isFirstTime();

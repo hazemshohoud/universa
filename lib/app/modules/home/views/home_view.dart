@@ -534,84 +534,92 @@ class HomeView extends GetView<HomeController> {
                 const SizedBox(height: 8),
 
                 // Instructor Row
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      'المحاضر: ${subject.instructor.fullName}',
-                      style: GoogleFonts.cairo(
-                        color: Colors.white70,
-                        fontSize: 14,
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerRight,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        'المحاضر: ${subject.instructor.fullName}',
+                        style: GoogleFonts.cairo(
+                          color: Colors.white70,
+                          fontSize: 14,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    const Icon(
-                      Icons.person_outline,
-                      size: 18,
-                      color: Colors.cyanAccent,
-                    ),
-                  ],
+                      const SizedBox(width: 8),
+                      const Icon(
+                        Icons.person_outline,
+                        size: 18,
+                        color: Colors.cyanAccent,
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 16),
 
                 // Badge and Price Row
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Enrollment Status Indicator
-                    if (subject.isEnrolled)
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.check_circle_outline,
-                            color: Colors.greenAccent,
-                            size: 18,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            'متاح',
-                            style: GoogleFonts.cairo(
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerRight,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Enrollment Status Indicator
+                      if (subject.isEnrolled)
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.check_circle_outline,
                               color: Colors.greenAccent,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
+                              size: 18,
                             ),
-                          ),
-                        ],
-                      )
-                    else
-                      const SizedBox.shrink(),
-                    // Badge
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF4A148C).withOpacity(0.3),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: const Color(0xFF4A148C)),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'مادة دراسية',
-                            style: GoogleFonts.cairo(
-                              color: const Color(0xFFB39DDB),
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
+                            const SizedBox(width: 4),
+                            Text(
+                              'متاح',
+                              style: GoogleFonts.cairo(
+                                color: Colors.greenAccent,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 6),
-                          const Icon(
-                            Icons.school_outlined,
-                            size: 14,
-                            color: Color(0xFFB39DDB),
-                          ),
-                        ],
+                          ],
+                        )
+                      else
+                        const SizedBox.shrink(),
+                      // Badge
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF4A148C).withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: const Color(0xFF4A148C)),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'مادة دراسية',
+                              style: GoogleFonts.cairo(
+                                color: const Color(0xFFB39DDB),
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            const Icon(
+                              Icons.school_outlined,
+                              size: 14,
+                              color: Color(0xFFB39DDB),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 20),
 

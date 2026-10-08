@@ -268,23 +268,26 @@ class LessonDetailsView extends GetView<LessonDetailsController> {
                         const SizedBox(height: 16),
 
                         // Completion Hint
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.info_outline,
-                              size: 16,
-                              color: Colors.white38,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              'تأكد من إكمال الدرس لتتمكن من الانتقال للدرس التالى',
-                              style: GoogleFonts.cairo(
-                                fontSize: 13,
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.info_outline,
+                                size: 16,
                                 color: Colors.white38,
                               ),
-                            ),
-                          ],
+                              const SizedBox(width: 8),
+                              Text(
+                                'تأكد من إكمال الدرس لتتمكن من الانتقال للدرس التالى',
+                                style: GoogleFonts.cairo(
+                                  fontSize: 13,
+                                  color: Colors.white38,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
 
                         const SizedBox(height: 12),

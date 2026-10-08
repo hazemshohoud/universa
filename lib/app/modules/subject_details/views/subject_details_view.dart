@@ -145,20 +145,24 @@ class SubjectDetailsView extends GetView<SubjectDetailsController> {
           ),
         ),
         const SizedBox(height: 12),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Text(
-              'المحاضر: ${subject.instructor.fullName}',
-              style: GoogleFonts.cairo(color: Colors.white70, fontSize: 16),
-            ),
-            const SizedBox(width: 8),
-            const Icon(
-              Icons.person_outline,
-              color: Colors.cyanAccent,
-              size: 20,
-            ),
-          ],
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerRight,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                'المحاضر: ${subject.instructor.fullName}',
+                style: GoogleFonts.cairo(color: Colors.white70, fontSize: 16),
+              ),
+              const SizedBox(width: 8),
+              const Icon(
+                Icons.person_outline,
+                color: Colors.cyanAccent,
+                size: 20,
+              ),
+            ],
+          ),
         ),
         if (subject.description.isNotEmpty) ...[
           const SizedBox(height: 20),

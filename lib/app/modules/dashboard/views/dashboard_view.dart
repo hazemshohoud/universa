@@ -27,12 +27,13 @@ class DashboardView extends GetView<DashboardController> {
         children: pages,
       )),
       bottomNavigationBar: SafeArea(
+        bottom: false,
         child: Obx(() => CurvedNavigationBar(
           index: controller.selectedIndex.value,
           backgroundColor: const Color(0xFF12121A), // Matches Scaffold background to blend in
           color: const Color(0xFF1A1A2E), // Navigation bar color
           buttonBackgroundColor: theme.colorScheme.primary, // Floating button color
-          height: 60,
+          height: 75,
           animationDuration: const Duration(milliseconds: 300),
           items: const [
             CurvedNavigationBarItem(
